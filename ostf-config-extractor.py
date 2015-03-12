@@ -1,4 +1,4 @@
-from __future__ import print_function
+import argparse
 import logging
 import os
 import requests
@@ -605,8 +605,18 @@ class NailgunConfig(object):
         return self.conf
 
 
-if __name__ == '__main__':
+def main(conf_file_name):
+
     conf_template = make_config_template()
     conf = NailgunConfig(conf_template).get_config()
-    save_conf(conf)
+    save_conf(conf, conf_file_name)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--output',
+                        default='ostf.test.conf',
+                        help='output file name')
+    args = parser.parse_args()
+    main(args.output)
+
 
