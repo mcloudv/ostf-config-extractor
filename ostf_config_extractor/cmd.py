@@ -20,6 +20,8 @@ import requests
 from oslo_config import cfg
 from collections import defaultdict
 
+from keystoneclient.v2_0 import client as keystoneclient
+
 logging.basicConfig(level=logging.DEBUG)
 
 LOG = logging
@@ -411,6 +413,24 @@ def save_conf(conf, file_name='ostf.test.conf'):
             f.write('\n')
     LOG.info('Config saved to %s' % file_name)
 
+def get_keystone_client():
+    os_tenant_name = os.environ.get('OS_TENANT_NAME', None)
+    os_username = os.environ.get('OS_USERNAME', None)
+    os_password = os.environ.get('OS_PASSWORD', None)
+    nailgun_host = os.environ.get('NAILGUN_HOST', None)
+    os_auth_url = os.environ.get('OS_AUTH_URL',
+                          'http://{}:5000/v2.0/'.format(nailgun_host))
+    os_region_name = os.environ.get('OS_REGION', None)
+
+    __keystone_client = keystoneclient.Client(
+        username=os_username,
+        password=os_password,
+        auth_url=os_auth_url,
+        tenant_name=os_tenant_name,
+        region_name=os_region_name
+    )
+    return __keystone_client
+
 class NailgunConfig(object):
 
     def __init__(self, conf):
@@ -420,6 +440,9 @@ class NailgunConfig(object):
         self.nailgun_url = 'http://{0}:{1}'.format(self.nailgun_host,
                                                    self.nailgun_port)
         token = os.environ.get('NAILGUN_TOKEN')
+        if not token:
+            token = get_keystone_client().auth_token
+
         self.cluster_id = os.environ.get('CLUSTER_ID', None)
         self.req_session = requests.Session()
         self.req_session.trust_env = False
