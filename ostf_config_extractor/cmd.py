@@ -418,8 +418,7 @@ def get_keystone_client():
     os_username = os.environ.get('OS_USERNAME', None)
     os_password = os.environ.get('OS_PASSWORD', None)
     nailgun_host = os.environ.get('NAILGUN_HOST', None)
-    os_auth_url = os.environ.get('OS_AUTH_URL',
-                          'http://{}:5000/v2.0/'.format(nailgun_host))
+    os_auth_url = 'http://{}:5000/v2.0/'.format(nailgun_host))
     os_region_name = os.environ.get('OS_REGION', None)
 
     __keystone_client = keystoneclient.Client(
