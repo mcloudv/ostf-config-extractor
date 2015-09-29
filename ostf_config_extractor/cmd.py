@@ -396,13 +396,14 @@ def make_config_template():
     register_sahara_opts(cfg.CONF)
     register_fuel_opts(cfg.CONF)
 
-    conf=defaultdict(dict)
+    conf = defaultdict(dict)
 
     for group in cfg.CONF.iterkeys():
             if cfg.CONF[group]:
                 for k, v in cfg.CONF[group].iteritems():
-                    conf[group][k]=v
+                    conf[group][k] = v
     return conf
+
 
 def save_conf(conf, file_name='ostf.test.conf'):
     with open(file_name, 'w') as f:
@@ -413,12 +414,13 @@ def save_conf(conf, file_name='ostf.test.conf'):
             f.write('\n')
     LOG.info('Config saved to %s' % file_name)
 
+
 def get_keystone_client():
     os_tenant_name = os.environ.get('OS_TENANT_NAME', None)
     os_username = os.environ.get('OS_USERNAME', None)
     os_password = os.environ.get('OS_PASSWORD', None)
     nailgun_host = os.environ.get('NAILGUN_HOST', None)
-    os_auth_url = 'http://{}:5000/v2.0/'.format(nailgun_host))
+    os_auth_url = 'http://{}:5000/v2.0/'.format(nailgun_host)
     os_region_name = os.environ.get('OS_REGION', None)
 
     __keystone_client = keystoneclient.Client(
@@ -429,6 +431,7 @@ def get_keystone_client():
         region_name=os_region_name
     )
     return __keystone_client
+
 
 class NailgunConfig(object):
 
@@ -626,8 +629,10 @@ class NailgunConfig(object):
             endpoint = public_vip or self.conf['compute']['public_ips'][0]
             endpoint_mur_sav = public_vip or self.conf[
                 'compute']['controller_nodes'][0]
-            self.conf['identity']['url'] = 'http://{0}/{1}/'.format(endpoint, 'dashboard')
-            self.conf['identity']['ubuntu_url'] = 'http://{0}/'.format(endpoint)
+            self.conf['identity']['url'] = 'http://{0}/{1}/'.format(
+                endpoint, 'dashboard')
+            self.conf['identity']['ubuntu_url'] = 'http://{0}/'.format(
+                endpoint)
             self.conf['identity']['uri'] = 'http://{0}:{1}/{2}/'.format(
                 endpoint, 5000, 'v2.0')
             self.conf['murano']['api_url'] = 'http://{0}:{1}'.format(
@@ -654,5 +659,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
