@@ -26,6 +26,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 LOG = logging
 
+PROTOCOL = os.environ.get('NAILGUN_PROTOCOL', 'http')
+
 identity_group = cfg.OptGroup(name='identity',
                               title="Keystone Configuration Options")
 
@@ -34,16 +36,16 @@ IdentityGroup = [
                default='identity',
                help="Catalog type of the Identity service."),
     cfg.BoolOpt('disable_ssl_certificate_validation',
-                default=False,
+                default=True,
                 help="Set to True if using self-signed SSL certificates."),
     cfg.StrOpt('uri',
-               default='http://localhost/',
+               default=PROTOCOL+'://localhost/',
                help="Full URI of the OpenStack Identity API (Keystone), v2"),
     cfg.StrOpt('url',
-               default='http://localhost:5000/v2.0/',
+               default=PROTOCOL+'://localhost:5000/v2.0/',
                help="Dashboard Openstack url, v2"),
     cfg.StrOpt('ubuntu_url',
-               default='http://localhost:5000/v2.0/',
+               default=PROTOCOL+'://localhost:5000/v2.0/',
                help="Dashboard Openstack url, v2"),
     cfg.StrOpt('uri_v3',
                help='Full URI of the OpenStack Identity API (Keystone), v3'),
@@ -191,7 +193,7 @@ ImageGroup = [
                default='image',
                help='Catalog type of the Image service.'),
     cfg.StrOpt('http_image',
-               default='http://download.cirros-cloud.net/0.3.1/'
+               default=PROTOCOL+'://download.cirros-cloud.net/0.3.1/'
                'cirros-0.3.1-x86_64-uec.tar.gz',
                help='http accessible image')
 ]
@@ -420,7 +422,10 @@ def get_keystone_client():
     os_username = os.environ.get('OS_USERNAME', None)
     os_password = os.environ.get('OS_PASSWORD', None)
     nailgun_host = os.environ.get('NAILGUN_HOST', None)
-    os_auth_url = 'http://{}:5000/v2.0/'.format(nailgun_host)
+    nailgun_protocol = os.environ.get('NAILGUN_PROTOCOL', 'http')
+    os_auth_url = '{protocol}://{host}:5000/v2.0/'.format(
+        protocol=nailgun_protocol,
+        host=nailgun_host)
     os_region_name = os.environ.get('OS_REGION', None)
 
     __keystone_client = keystoneclient.Client(
@@ -439,7 +444,9 @@ class NailgunConfig(object):
         LOG.info('INITIALIZING NAILGUN CONFIG')
         self.nailgun_host = os.environ.get('NAILGUN_HOST', None)
         self.nailgun_port = os.environ.get('NAILGUN_PORT', None)
-        self.nailgun_url = 'http://{0}:{1}'.format(self.nailgun_host,
+        self.nailgun_protocol = os.environ.get('NAILGUN_PROTOCOL', 'http')
+        self.nailgun_url = '{0}://{1}:{2}'.format(self.nailgun_protocol,
+                                                   self.nailgun_host,
                                                    self.nailgun_port)
         token = os.environ.get('NAILGUN_TOKEN')
         if not token:
@@ -615,7 +622,7 @@ class NailgunConfig(object):
             is processed
         """
         if self.conf['compute']['online_controllers']:
-            os.environ['http_proxy'] = 'http://{0}:{1}'.format(
+            os.environ['http_proxy'] = PROTOCOL+'://{0}:{1}'.format(
                 self.conf['compute']['online_controllers'][0], 8888)
         else:
             raise Exception('Http proxy was not set')
@@ -629,17 +636,17 @@ class NailgunConfig(object):
             endpoint = public_vip or self.conf['compute']['public_ips'][0]
             endpoint_mur_sav = public_vip or self.conf[
                 'compute']['controller_nodes'][0]
-            self.conf['identity']['url'] = 'http://{0}/{1}/'.format(
+            self.conf['identity']['url'] = PROTOCOL+'://{0}/{1}/'.format(
                 endpoint, 'dashboard')
-            self.conf['identity']['ubuntu_url'] = 'http://{0}/'.format(
+            self.conf['identity']['ubuntu_url'] = PROTOCOL+'://{0}/'.format(
                 endpoint)
-            self.conf['identity']['uri'] = 'http://{0}:{1}/{2}/'.format(
+            self.conf['identity']['uri'] = PROTOCOL+'://{0}:{1}/{2}/'.format(
                 endpoint, 5000, 'v2.0')
-            self.conf['murano']['api_url'] = 'http://{0}:{1}'.format(
+            self.conf['murano']['api_url'] = PROTOCOL+'://{0}:{1}'.format(
                 endpoint_mur_sav, 8082)
-            self.conf['sahara']['api_url'] = 'http://{0}:{1}/{2}'.format(
+            self.conf['sahara']['api_url'] = PROTOCOL+'://{0}:{1}/{2}'.format(
                 endpoint_mur_sav, 8386, 'v1.0')
-            self.conf['heat']['endpoint'] = 'http://{0}:{1}/{2}'.format(
+            self.conf['heat']['endpoint'] = PROTOCOL+'://{0}:{1}/{2}'.format(
                 endpoint_mur_sav, 8004, 'v1')
 
     def get_config(self):
