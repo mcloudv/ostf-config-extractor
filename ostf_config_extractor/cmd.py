@@ -423,7 +423,7 @@ def get_keystone_client():
     os_password = os.environ.get('OS_PASSWORD', None)
     nailgun_host = os.environ.get('NAILGUN_HOST', None)
     nailgun_protocol = os.environ.get('NAILGUN_PROTOCOL', 'http')
-    os_auth_url = '{protocol}://{host}:5000/v2.0/'.format(
+    os_auth_url = 'http://{host}:5000/v2.0/'.format(
         protocol=nailgun_protocol,
         host=nailgun_host)
     os_region_name = os.environ.get('OS_REGION', None)
@@ -445,7 +445,7 @@ class NailgunConfig(object):
         self.nailgun_host = os.environ.get('NAILGUN_HOST', None)
         self.nailgun_port = os.environ.get('NAILGUN_PORT', None)
         self.nailgun_protocol = os.environ.get('NAILGUN_PROTOCOL', 'http')
-        self.nailgun_url = '{0}://{1}:{2}'.format(self.nailgun_protocol,
+        self.nailgun_url = 'http://{1}:{2}'.format(self.nailgun_protocol,
                                                    self.nailgun_host,
                                                    self.nailgun_port)
         token = os.environ.get('NAILGUN_TOKEN')

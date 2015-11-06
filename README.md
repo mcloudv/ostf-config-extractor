@@ -13,6 +13,9 @@ Extractor requires some credentials (environment variables):
 export NAILGUN_HOST=<ip_of_nailgun_host>
 export NAILGUN_PORT=<port>
 
+# This variable is used for access to cloud, not to Nailgun itself!
+export NAILGUN_PROTOCOL=<http_or_https>
+
 export CLUSTER_ID=<cluster_id>
 
 export OS_USERNAME=<username>
@@ -24,4 +27,4 @@ ostf-config-extractor -o ostf.conf
 ```
 
 By default, on MOS cloud there're username=admin, password=admin, tenant=admin,
-nailgun_port=8000, cluster_id=1.
+nailgun_port=8000, nailgun_protocol=http, cluster_id=1.
