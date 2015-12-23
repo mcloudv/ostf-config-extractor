@@ -459,7 +459,12 @@ class NailgunConfig(object):
             self.req_session.headers.update({'X-Auth-Token': token})
 
         self.conf = conf
-        self.prepare_config()
+        try:
+            self.prepare_config()
+        except:
+            LOG.error(("You should either provide valid credentials"
+                       " or create a config file manually!"))
+            exit(1)
 
     def prepare_config(self):
         try:
