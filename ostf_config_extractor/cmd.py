@@ -17,7 +17,11 @@ import logging
 import os
 import requests
 
-from oslo_config import cfg
+try:
+    from oslo_config import cfg
+except ImportError:
+    from oslo.config import cfg
+
 from collections import defaultdict
 
 from keystoneclient.v2_0 import client as keystoneclient
