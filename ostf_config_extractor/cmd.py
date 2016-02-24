@@ -343,7 +343,7 @@ MuranoConfig = [
                default=None,
                help="Murano API Service management URL."),
     cfg.BoolOpt('insecure',
-                default=False,
+                default=True,
                 help="This parameter allow to enable SSL encription"),
     cfg.StrOpt('agListnerIP',
                default='10.100.0.155',
