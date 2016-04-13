@@ -18,9 +18,9 @@ import os
 import requests
 
 try:
-    from oslo_config import cfg
-except ImportError:
     from oslo.config import cfg
+except ImportError:
+    from oslo_config import cfg
 
 from collections import defaultdict
 
