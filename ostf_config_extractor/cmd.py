@@ -514,6 +514,8 @@ class NailgunConfig(object):
         )
         self.conf['compute']['libvirt_type'] = common_data[
             'libvirt_type']['value']
+        self.conf['compute']['use_vcenter'] = common_data[
+            'use_vcenter']['value']
         self.conf['compute']['auto_assign_floating_ip'] = common_data[
             'auto_assign_floating_ip']['value']
 
