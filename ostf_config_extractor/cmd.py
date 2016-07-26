@@ -609,6 +609,17 @@ class NailgunConfig(object):
             self.cluster_id, self.conf['network']['network_provider'])
         data = self.req_session.get(self.nailgun_url + api_url).json()
         self.conf['network']['raw_data'] = data
+        # NOTE(albartash): Fix for OSTF 8.0+
+        try:
+            net_params = self['network']['raw_data'].get(
+                'networking_parameters')
+            self.conf['network']['private_net'] = net_params.get(
+                'internal_name', 'admin_internal_net')
+            LOG.debug('Found private network: {0}'.format(
+                self.conf['network']['private_net']))
+        except Exception:
+            LOG.debug('Something went wrong while getting network '
+                      'options from raw_data. Please re-check.')
 
     def _parse_cluster_generated_data(self):
         api_url = '/api/clusters/%s/generated' % self.cluster_id
